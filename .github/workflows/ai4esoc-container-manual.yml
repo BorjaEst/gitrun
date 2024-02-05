@@ -1,0 +1,31 @@
+name: Deploy a gitrun container to ai4eosc platform
+
+env:
+  VO: "vo.ai4eosc.eu"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-runner:
+    runs-on: ubuntu-latest
+    name: Deploy a gitrun container to ai4eosc platform
+    steps:
+      - name: Get oidc token from secret mytoken
+        id: get-access-token
+        uses: BorjaEst/mytoken-action@1.0.0
+        with:
+          my-token: ${{ secrets.MYTOKEN }}
+
+      - name: Start runner in ai4eosc platform
+        id: start-runner
+        uses: ./.github/actions/ai4eosc-start-runner
+        with:
+          at: ${{ steps.get-access-token.outputs.access-token }}
+          vo: ${{ env.VO }}
+
+      - name: Print container public access url
+        run: echo "https://api-${{ steps.start-runner.outputs.container_url }}.deployments.cloud.ai4eosc.eu"
