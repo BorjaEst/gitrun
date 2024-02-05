@@ -1,0 +1,39 @@
+name: MyToken Action
+description: Github Action to obtain an OIDC access token form a MyToken secret
+author: Karlsruhe Institute of Technology
+
+inputs:
+  at:
+    description: Access token to use for the request
+    required: true
+  vo:
+    description: The VO to use to retrieve the access token
+    required: true
+
+outputs:
+  container-id:
+    description: The container id in the platform
+    value: ${{ steps.deploy-container.outputs.container-id }}
+
+runs:
+  using: composite
+  steps:
+    - id: deploy-container
+      shell: bash
+      run: |
+        JOB_ID=$(curl --request 'POST' \
+          'https://api.cloud.ai4eosc.eu/v1/deployments/modules/?vo=${{ inputs.vo }}' \
+          -H 'accept: application/json' \
+          -H 'Authorization: Bearer ${{ inputs.at }}' \
+          -H 'Content-Type: application/json' \
+          --fail-with-body --silent --show-error \
+          -d '{
+            "general":{
+                "docker_image": "boressan/gitrun",
+                "service": "deepaas"
+            },
+            "hardware": {
+                "cpu_num": 4
+            }
+        }' | jq -re .job_ID)
+        echo "container-id=$JOB_ID" >> $GITHUB_OUTPUT
