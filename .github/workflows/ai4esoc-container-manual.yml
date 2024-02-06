@@ -33,4 +33,6 @@ jobs:
           vo: ${{ env.VO }}
 
       - name: Print container public access url
-        run: echo "https://api-${{ steps.start-runner.outputs.container_url }}.deployments.cloud.ai4eosc.eu"
+        run: echo "https://api-$RUNNER_ID.deployments.cloud.ai4eosc.eu"
+        env:
+          RUNNER_ID: ${{ steps.start-runner.outputs.container-id }}
