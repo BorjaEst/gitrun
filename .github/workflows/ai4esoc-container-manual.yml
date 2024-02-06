@@ -14,6 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy a gitrun container to ai4eosc platform
     steps:
+      - name: Checkout repository content
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
       - name: Get oidc token from secret mytoken
         id: get-access-token
         uses: BorjaEst/mytoken-action@1.0.0
