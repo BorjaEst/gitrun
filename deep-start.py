@@ -5,9 +5,7 @@ import argparse
 import logging
 import subprocess
 import sys
-import urllib.parse
 
-import requests
 
 logger = logging.getLogger(__name__)
 
@@ -27,57 +25,21 @@ parser.add_argument(
     default="INFO",
 )
 parser.add_argument(
-    *["-t", "--token"],
-    help="Token to register runner in the GitHub repository.",
-    type=str,
-    required=True,
-)
-parser.add_argument(
-    *["-u", "--url"],
-    help="Github repository where to store the runner.",
-    type=urllib.parse.urlparse,
-    required=True,
-)
-parser.add_argument(
-    *["--timeout"],
-    help="Timeout for the HTTP requests (default: %(default)s)",
+    *["--jitconfig"],
+    help="Encoded JIT configuration for the runner",
     type=int,
     default=10,
 )
 
 
 # Script command actions --------------------------------------------
-def _run_command(token, url, **options):
+def _run_command(jitconfig, **options):
     # Common operations
     logging.basicConfig(level=options["verbosity"])
 
-    # Exchange token the GitHub token with a real access token
-    logger.info("Exchange token for access token")
-    response = requests.post(
-        url=f"{url.geturl()}/actions/runners/registration-token",
-        headers={
-            "Authorization": f"token {token}",
-            "Accept": "application/vnd.github.v3+json",
-        },
-        timeout=options["timeout"],
-    )
-
-    # Check if the request was successful
-    logger.debug("Response: %s", response.status_code)
-    match response.status_code:
-        case 200:
-            token = response.json()["token"]
-        case _:
-            response.raise_for_status()
-
-    # Configure the runner
-    logger.info("Configuring the runner")
-    cmd = ["./config.sh", "--url", url.geturl(), "--token", token]
-    subprocess.run(cmd, check=True)
-
     # Run the main program
     logger.info("Running the main program")
-    cmd = ["./run.sh"]
+    cmd = ["./run.sh", f"--jitconfig={jitconfig}"]
     subprocess.run(cmd, check=True)
 
     # End of program

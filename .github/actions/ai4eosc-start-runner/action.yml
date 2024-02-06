@@ -9,6 +9,9 @@ inputs:
   vo:
     description: The VO to use to retrieve the access token
     required: true
+  config:
+    description: The jit configuration string to use
+    required: true
 
 outputs:
   container-id:
@@ -31,7 +34,7 @@ runs:
           --data '{
             "general":{
                 "docker_image": "boressan/gitrun",
-                "service": "deepaas"
+                "service": "deepaas --jitconfig=${{ inputs.config }}",
             },
             "hardware": {
                 "cpu_num": 4

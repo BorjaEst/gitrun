@@ -11,7 +11,6 @@ RUN apt-get install -y --no-install-suggests --no-install-recommends \
     curl \
     ca-certificates \
     python3 \
-    pip \
     jq
 
 # Create the directory for the github runner
@@ -27,7 +26,6 @@ RUN curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VER
 
 # install some additional dependencies
 RUN ./bin/installdependencies.sh
-RUN python3 -m pip install --no-cache-dir requests
 
 # copy over the start.sh script
 COPY deep-start.py /usr/local/bin/deep-start
