@@ -20,7 +20,7 @@ jobs:
           ref: ${{ github.ref }}
 
       - name: Generate a JIT configuration file for a self-hosted runner
-        id: gen-jitconfig
+        id: get-jitconfig
         run: |
           JITCONFIG=$(curl -L --request POST \
             --url https://api.github.com/repos/OWNER/REPO/actions/runners/generate-jitconfig \
@@ -33,7 +33,7 @@ jobs:
                 "runner_group_id": 1,
                 "labels": ["self-hosted","ai4eosc"],
                 "work_folder": "_work"
-              }'| jq -r .encoded_jit_config)
+              }'| jq -re .encoded_jit_config)
           echo "jitconfig=$JITCONFIG" >> $GITHUB_OUTPUT
 
       - name: Get oidc token from secret mytoken
@@ -48,7 +48,7 @@ jobs:
         with:
           at: ${{ steps.get-access-token.outputs.access-token }}
           vo: ${{ env.VO }}
-          config: ${{ steps.gen-jitconfig.outputs.jitconfig }}
+          config: ${{ steps.get-jitconfig.outputs.jitconfig }}
 
       - name: Print container public access url
         run: echo "https://api-$RUNNER_ID.deployments.cloud.ai4eosc.eu"
