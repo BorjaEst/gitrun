@@ -27,6 +27,7 @@ jobs:
             --header 'Accept: application/vnd.github+json' \
             --header 'Authorization: Bearer ${{ secrets.APITOKEN }}' \
             --header 'X-GitHub-Api-Version: 2022-11-28' \
+            --fail-with-body --silent --show-error \
             --data '{
                 "name": "New ai4eosc runner",
                 "runner_group_id": 1,
