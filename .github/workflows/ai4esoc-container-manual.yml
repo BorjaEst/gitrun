@@ -23,7 +23,7 @@ jobs:
         id: get-jitconfig
         run: |
           JITCONFIG=$(curl -L --request POST \
-            --url https://api.github.com/repos/OWNER/REPO/actions/runners/generate-jitconfig \
+            --url https://api.github.com/repos/BorjaEst/gitrun/actions/runners/generate-jitconfig \
             --header 'Accept: application/vnd.github+json' \
             --header 'Authorization: Bearer ${{ secrets.APITOKEN }}' \
             --header 'X-GitHub-Api-Version: 2022-11-28' \
