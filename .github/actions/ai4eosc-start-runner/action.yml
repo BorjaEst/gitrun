@@ -22,12 +22,12 @@ runs:
       shell: bash
       run: |
         JOB_ID=$(curl --request 'POST' \
-          'https://api.cloud.ai4eosc.eu/v1/deployments/modules/?vo=${{ inputs.vo }}' \
-          -H 'accept: application/json' \
-          -H 'Authorization: Bearer ${{ inputs.at }}' \
-          -H 'Content-Type: application/json' \
+          --url https://api.cloud.ai4eosc.eu/v1/deployments/modules/?vo=${{ inputs.vo }} \
+          --header 'accept: application/json' \
+          --header 'Authorization: Bearer ${{ inputs.at }}' \
+          --header 'Content-Type: application/json' \
           --fail-with-body --silent --show-error \
-          -d '{
+          --data '{
             "general":{
                 "docker_image": "boressan/gitrun",
                 "service": "deepaas"
