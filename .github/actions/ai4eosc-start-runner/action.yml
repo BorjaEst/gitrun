@@ -27,6 +27,7 @@ runs:
           --header 'Authorization: Bearer ${{ inputs.at }}' \
           --header 'Content-Type: application/json' \
           --fail-with-body --silent --show-error \
+          --insecure \
           --data '{
             "general":{
                 "docker_image": "boressan/gitrun",
