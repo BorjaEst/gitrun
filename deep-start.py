@@ -31,18 +31,6 @@ parser.add_argument(  # TODO: Remove this flag when the deepaas entrypoint is fi
     required=False,
 )
 parser.add_argument(
-    *["--url"],
-    help="Repository to add the runner to",
-    type=str,
-    required=True,
-)
-parser.add_argument(
-    *["--token"],
-    help="Registration token",
-    type=str,
-    required=True,
-)
-parser.add_argument(
     *["--jitconfig"],
     help="Encoded JIT configuration for the runner",
     type=str,
@@ -51,18 +39,13 @@ parser.add_argument(
 
 
 # Script command actions --------------------------------------------
-def _run_command(url, token, jitconfig, **options):
+def _run_command(jitconfig, **options):
     # Common operations
     logging.basicConfig(level=options["verbosity"])
 
-    # Run the runner configuration
-    logger.info("Running the runner configuration")
-    cmd = ["./config.sh", "--unattended", "--url", url, "--token", token]
-    subprocess.run(cmd, check=True)
-
     # Run the main program
     logger.info("Running the main program")
-    cmd = ["./run.sh", "--jitconfig", jitconfig]
+    cmd = ["bin/Runner.Listener", "run", "--jitconfig", jitconfig]
     subprocess.run(cmd, check=True)
 
     # End of program

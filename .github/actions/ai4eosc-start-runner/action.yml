@@ -9,14 +9,8 @@ inputs:
   at:
     description: Access token to use for the request
     required: true
-  rt:
-    description: The registration token to use
-    required: true
   vo:
     description: The VO to use to retrieve the access token
-    required: true
-  url:
-    description: The repository URL to use
     required: true
 
 outputs:
@@ -30,7 +24,7 @@ runs:
     - id: deploy-container
       shell: bash
       run: |
-        SERVICE_CALL="deepaas --url=${{ inputs.url }} --token=${{ inputs.rt }} --jitconfig=${{ inputs.config }}"
+        SERVICE_CALL="deepaas --jitconfig=${{ inputs.config }}"
         JOB_ID=$(curl --request 'POST' \
           --url https://api.cloud.ai4eosc.eu/v1/deployments/modules/?vo=${{ inputs.vo }} \
           --header 'accept: application/json' \
