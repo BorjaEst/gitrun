@@ -27,3 +27,17 @@ Container to run CICD on self hosted machine on demand.
 5. Confirm the creation of the token and copy the token.
 6. Go to your Github repository and go to `Settings` -> `Secrets` -> `New repository secret`.
 7. Name the secret `APITOKEN` and paste the token in the value field, confirm.
+
+# Local testing
+
+You can add your computer to the workflow as running by using the container:
+
+```bash
+$ docker build -t gitrun .
+$ docker run -it --rm gitrun deep-start --jitconfig=$JITCONFIG
+```
+
+Where `$JITCONFIG` is the JIT configuration. You can get the JIT configuration by
+by calling the workflow [`print-jitconfig`](.github/workflows/print-jitconfig.yml).
+
+> The JIT configuration is encoded and therefore safe to share.
