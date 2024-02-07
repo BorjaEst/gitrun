@@ -1,7 +1,6 @@
 name: Deploy a gitrun container to ai4eosc platform
 
 env:
-  repository: "BorjaEst/gitrun"
   VO: "vo.ai4eosc.eu"
 
 on:
@@ -30,7 +29,6 @@ jobs:
         id: get-jitconfig
         uses: ./.github/actions/get-jitconfig
         with:
-          repository: ${{ env.repository }}
           api-token: ${{ secrets.APITOKEN }}
 
       - name: Start runner in ai4eosc platform

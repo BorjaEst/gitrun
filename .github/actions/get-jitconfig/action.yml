@@ -3,9 +3,6 @@ description: Github Action to get a JIT configuration to configure a runner
 author: Karlsruhe Institute of Technology
 
 inputs:
-  repository:
-    description: The repository to where to attach the runner
-    required: true
   api-token:
     description: Access token to use for the request
     required: true
@@ -22,7 +19,7 @@ runs:
       shell: bash
       run: |
         JITCONFIG=$(curl -L --request POST \
-          --url https://api.github.com/repos/${{ inputs.repository }}/actions/runners/generate-jitconfig \
+          --url https://api.github.com/repos/${{ github.repository }}/actions/runners/generate-jitconfig \
           --header 'Accept: application/vnd.github+json' \
           --header 'Authorization: Bearer ${{ inputs.api-token }}' \
           --header 'X-GitHub-Api-Version: 2022-11-28' \
