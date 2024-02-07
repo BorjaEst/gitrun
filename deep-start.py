@@ -51,12 +51,12 @@ def _run_command(url, token, jitconfig, **options):
 
     # Run the runner configuration
     logger.info("Running the runner configuration")
-    cmd = ["./config.sh", f"--url={url}", f"--token={token}"]
+    cmd = ["./config.sh", "--unattended" f"--url {url}", f"--token {token}"]
     subprocess.run(cmd, check=True)
 
     # Run the main program
     logger.info("Running the main program")
-    cmd = ["./run.sh", f"--jitconfig={jitconfig}"]
+    cmd = ["./run.sh", f"--jitconfig {jitconfig}"]
     subprocess.run(cmd, check=True)
 
     # End of program

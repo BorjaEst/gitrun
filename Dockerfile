@@ -37,4 +37,4 @@ USER github
 
 # set the entrypoint to the deep-start.py script
 EXPOSE 5000
-# ENTRYPOINT [ "deep-start" ]
+ENTRYPOINT [ "deep-start" ]
