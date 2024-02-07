@@ -28,7 +28,7 @@ jobs:
 
       - name: Generate a JIT configuration file for a self-hosted runner
         id: get-jitconfig
-        uses: ./.github/actions/ai4eosc-start-runner
+        uses: ./.github/actions/get-jitconfig
         with:
           repository: ${{ env.repository }}
           api-token: ${{ secrets.APITOKEN }}
