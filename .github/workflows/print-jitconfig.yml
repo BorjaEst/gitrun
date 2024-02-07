@@ -1,0 +1,26 @@
+name: Print JIT configuration for a self-hosted runner
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-runner:
+    runs-on: ubuntu-latest
+    name: Request a JIT configuration for a self-hosted runner
+    steps:
+      - name: Checkout repository content
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Generate a JIT configuration file for a self-hosted runner
+        id: get-jitconfig
+        uses: ./.github/actions/get-jitconfig
+        with:
+          api-token: ${{ secrets.APITOKEN }}
+
+      - name: Print JIT configuration
+        run: echo "{{ steps.get-jitconfig.outputs.jitconfig }}"
