@@ -1,0 +1,37 @@
+name: Get JIT configuration
+description: Github Action to get a JIT configuration to configure a runner
+author: Karlsruhe Institute of Technology
+
+inputs:
+  repository:
+    description: The repository to where to attach the runner
+    required: true
+  api-token:
+    description: Access token to use for the request
+    required: true
+
+outputs:
+  jitconfig:
+    description: The JIT configuration for the runner
+    value: ${{ steps.get-jitconfig.outputs.jitconfig }}
+
+runs:
+  using: composite
+  steps:
+    - id: get-jitconfig
+      shell: bash
+      run: |
+        JITCONFIG=$(curl -L --request POST \
+          --url https://api.github.com/repos/${{ inputs.repository }}/actions/runners/generate-jitconfig \
+          --header 'Accept: application/vnd.github+json' \
+          --header 'Authorization: Bearer ${{ inputs.api-token }}' \
+          --header 'X-GitHub-Api-Version: 2022-11-28' \
+          --fail-with-body --silent --show-error \
+          --data '{
+              "name": "'"ai4eosc runner $(uuidgen)"'",
+              "runner_group_id": 1,
+              "labels": ["self-hosted","ai4eosc"],
+              "work_folder": "_work",
+              "ephemeral": "true"
+            }'| jq -re .encoded_jit_config)
+        echo "jitconfig=$JITCONFIG" >> $GITHUB_OUTPUT

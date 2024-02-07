@@ -20,29 +20,18 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
-      - name: Generate a JIT configuration file for a self-hosted runner
-        id: get-jitconfig
-        run: |
-          JITCONFIG=$(curl -L --request POST \
-            --url https://api.github.com/repos/${{ env.repository }}/actions/runners/generate-jitconfig \
-            --header 'Accept: application/vnd.github+json' \
-            --header 'Authorization: Bearer ${{ secrets.APITOKEN }}' \
-            --header 'X-GitHub-Api-Version: 2022-11-28' \
-            --fail-with-body --silent --show-error \
-            --data '{
-                "name": "'"ai4eosc runner $(uuidgen)"'",
-                "runner_group_id": 1,
-                "labels": ["self-hosted","ai4eosc"],
-                "work_folder": "_work",
-                "ephemeral": "true"
-              }'| jq -re .encoded_jit_config)
-          echo "jitconfig=$JITCONFIG" >> $GITHUB_OUTPUT
-
       - name: Get oidc token from secret mytoken
         id: get-access-token
         uses: BorjaEst/mytoken-action@1.0.0
         with:
           my-token: ${{ secrets.MYTOKEN }}
+
+      - name: Generate a JIT configuration file for a self-hosted runner
+        id: get-jitconfig
+        uses: ./.github/actions/ai4eosc-start-runner
+        with:
+          repository: ${{ env.repository }}
+          api-token: ${{ secrets.APITOKEN }}
 
       - name: Start runner in ai4eosc platform
         id: start-runner
