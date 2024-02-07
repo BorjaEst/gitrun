@@ -1,10 +1,12 @@
 name: Deploy a gitrun container to ai4eosc platform
 
-env:
-  VO: "vo.ai4eosc.eu"
-
 on:
   workflow_dispatch:
+    inputs:
+      vo:
+        description: "The VO to use"
+        type: string
+        default: "vo.ai4eosc.eu"
 
 permissions:
   contents: read
@@ -37,7 +39,7 @@ jobs:
         with:
           config: ${{ steps.get-jitconfig.outputs.jitconfig }}
           at: ${{ steps.get-access-token.outputs.access-token }}
-          vo: ${{ env.VO }}
+          vo: ${{ inputs.VO }}
 
       - name: Print container public access url
         run: echo "https://api-$RUNNER_ID.deployments.cloud.ai4eosc.eu"
