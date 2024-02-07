@@ -1,5 +1,5 @@
-name: MyToken Action
-description: Github Action to obtain an OIDC access token form a MyToken secret
+name: Runner ai4eosc
+description: Github Action producing a runner in the AI4EOSC platform
 author: Karlsruhe Institute of Technology
 
 inputs:
