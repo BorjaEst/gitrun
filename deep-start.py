@@ -25,17 +25,34 @@ parser.add_argument(
     default="INFO",
 )
 parser.add_argument(
+    *["--url"],
+    help="Repository to add the runner to",
+    type=str,
+    required=True,
+)
+parser.add_argument(
+    *["--token"],
+    help="Registration token",
+    type=str,
+    required=True,
+)
+parser.add_argument(
     *["--jitconfig"],
     help="Encoded JIT configuration for the runner",
-    type=int,
-    default=10,
+    type=str,
+    required=True,
 )
 
 
 # Script command actions --------------------------------------------
-def _run_command(jitconfig, **options):
+def _run_command(url, token, jitconfig, **options):
     # Common operations
     logging.basicConfig(level=options["verbosity"])
+
+    # Run the runner configuration
+    logger.info("Running the runner configuration")
+    cmd = ["./config.sh", f"--url={url}", f"--token={token}"]
+    subprocess.run(cmd, check=True)
 
     # Run the main program
     logger.info("Running the main program")

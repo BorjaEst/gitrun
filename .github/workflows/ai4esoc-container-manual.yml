@@ -1,6 +1,7 @@
 name: Deploy a gitrun container to ai4eosc platform
 
 env:
+  repository: "BorjaEst/gitrun"
   VO: "vo.ai4eosc.eu"
 
 on:
@@ -19,11 +20,23 @@ jobs:
         with:
           ref: ${{ github.ref }}
 
+      - name: Exchange APITOKEN by registration TOKEN
+        id: get-regtoken
+        run: |
+          REGTOKEN=$(curl -L --request POST \
+            --url https://api.github.com/repos/${{ env.repository }}/actions/runners/registration-token \
+            --header 'Accept: application/vnd.github+json' \
+            --header 'Authorization: Bearer ${{ secrets.APITOKEN }}' \
+            --header 'X-GitHub-Api-Version: 2022-11-28' \
+            --fail-with-body --silent --show-error | jq -re .token)
+          echo "::add-mask::$REGTOKEN"
+          echo "regtoken=$REGTOKEN" >> $GITHUB_OUTPUT
+
       - name: Generate a JIT configuration file for a self-hosted runner
         id: get-jitconfig
         run: |
           JITCONFIG=$(curl -L --request POST \
-            --url https://api.github.com/repos/BorjaEst/gitrun/actions/runners/generate-jitconfig \
+            --url https://api.github.com/repos/${{ env.repository }}/actions/runners/generate-jitconfig \
             --header 'Accept: application/vnd.github+json' \
             --header 'Authorization: Bearer ${{ secrets.APITOKEN }}' \
             --header 'X-GitHub-Api-Version: 2022-11-28' \
@@ -47,9 +60,11 @@ jobs:
         id: start-runner
         uses: ./.github/actions/ai4eosc-start-runner
         with:
-          at: ${{ steps.get-access-token.outputs.access-token }}
-          vo: ${{ env.VO }}
           config: ${{ steps.get-jitconfig.outputs.jitconfig }}
+          at: ${{ steps.get-access-token.outputs.access-token }}
+          rt: ${{ steps.get-regtoken.outputs.regtoken }}
+          vo: ${{ env.VO }}
+          url: https://github.com/${{ env.repository }}
 
       - name: Print container public access url
         run: echo "https://api-$RUNNER_ID.deployments.cloud.ai4eosc.eu"
