@@ -24,6 +24,12 @@ parser.add_argument(
     choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
     default="INFO",
 )
+parser.add_argument(  # TODO: Remove this flag when the deepaas entrypoint is fixed
+    *["--deepaas"],
+    help="Hacky flag to bypass the deepaas entrypoint",
+    action="store_true",
+    required=False,
+)
 parser.add_argument(
     *["--url"],
     help="Repository to add the runner to",
@@ -51,12 +57,12 @@ def _run_command(url, token, jitconfig, **options):
 
     # Run the runner configuration
     logger.info("Running the runner configuration")
-    cmd = ["./config.sh", "--unattended" f"--url {url}", f"--token {token}"]
+    cmd = ["./config.sh", "--unattended", "--url", url, "--token", token]
     subprocess.run(cmd, check=True)
 
     # Run the main program
     logger.info("Running the main program")
-    cmd = ["./run.sh", f"--jitconfig {jitconfig}"]
+    cmd = ["./run.sh", "--jitconfig", jitconfig]
     subprocess.run(cmd, check=True)
 
     # End of program
