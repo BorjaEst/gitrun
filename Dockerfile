@@ -24,17 +24,17 @@ RUN curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VER
     && tar xzf ./actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \
     && rm ./actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz 
 
-# install some additional dependencies
+# install some additional dependencies and change ownership
 RUN ./bin/installdependencies.sh
+RUN chown -R github:github /srv/actions-runner
 
 # copy over the start.sh script
 COPY deep-start.py /usr/local/bin/deep-start
 RUN chmod +x /usr/local/bin/deep-start
 
-# # Create a user to run the github runner
-RUN chown -R github:github /srv/actions-runner
+# Create a user to run the github runner
 USER github
 
 # set the entrypoint to the deep-start.py script
 EXPOSE 5000
-ENTRYPOINT [ "deep-start" ]
+CMD [ "deep-start" ]
