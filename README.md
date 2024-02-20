@@ -41,3 +41,7 @@ Where `$JITCONFIG` is the JIT configuration. You can get the JIT configuration b
 by calling the workflow [`print-jitconfig`](.github/workflows/print-jitconfig.yml).
 
 > The JIT configuration is encoded and therefore safe to share.
+
+## TODO:
+
+- rm default.conf for nginx server

@@ -28,12 +28,17 @@ RUN curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VER
 RUN ./bin/installdependencies.sh
 RUN chown -R github:github /srv/actions-runner
 
+
+# Install nginx to serve errors via html
+RUN apt-get install -y nginx
+COPY default.conf /etc/nginx/conf.d/default.conf
+
 # copy over the start.sh script
 COPY deep-start.py /usr/local/bin/deep-start
 RUN chmod +x /usr/local/bin/deep-start
 
 # Create a user to run the github runner
-USER github
+# USER github
 
 # set the entrypoint to the deep-start.py script
 EXPOSE 5000

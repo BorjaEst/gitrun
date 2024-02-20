@@ -46,7 +46,17 @@ def _run_command(jitconfig, **options):
     # Run the main program
     logger.info("Running the main program")
     cmd = ["bin/Runner.Listener", "run", "--jitconfig", jitconfig]
-    subprocess.run(cmd, check=True)
+    run = subprocess.run(cmd, capture_output=True, check=False, timeout=20)
+
+    # Put the logs into html file
+    logger.info("Creating the html log file")
+    with open("index.html", "w", encoding="utf-8") as f:
+        f.write(run.stdout.decode("utf-8"))
+        f.write(run.stderr.decode("utf-8"))
+
+    # Start nginx with index.html and the info
+    logger.info("Starting nginx")
+    run = subprocess.run(["nginx", "-g", "daemon off;"], check=True)
 
     # End of program
     logger.info("End of github runner script")
