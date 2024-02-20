@@ -35,6 +35,7 @@ runs:
           --data '{
             "general":{
                 "docker_image": "boressan/gitrun",
+                "docker_tag": "${{ github.ref_name }}",
                 "service": "'"$SERVICE_CALL"'"
             },
             "hardware": {
