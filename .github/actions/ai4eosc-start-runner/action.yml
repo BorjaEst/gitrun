@@ -24,7 +24,7 @@ runs:
     - id: deploy-container
       shell: bash
       run: |
-        SERVICE_CALL="deepaas --jitconfig=${{ inputs.config }}"
+        SERVICE_CALL="jitconfig ${{ inputs.config }}"
         JOB_ID=$(curl --request 'POST' \
           --url https://api.cloud.ai4eosc.eu/v1/deployments/modules/?vo=${{ inputs.vo }} \
           --header 'accept: application/json' \
@@ -35,6 +35,7 @@ runs:
           --data '{
             "general":{
                 "docker_image": "boressan/gitrun",
+                "docker_tag": "${{ github.ref_name }}",
                 "service": "'"$SERVICE_CALL"'"
             },
             "hardware": {
