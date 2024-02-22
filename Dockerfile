@@ -9,9 +9,7 @@ ARG RUNNER_VERSION="2.312.0"
 RUN apt-get update -y
 RUN apt-get install -y --no-install-suggests --no-install-recommends \
     curl \
-    ca-certificates \
-    python3 \
-    jq
+    ca-certificates
 
 # Create the directory for the github runner
 RUN adduser --system --group --no-create-home github
@@ -28,13 +26,12 @@ RUN curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VER
 RUN ./bin/installdependencies.sh
 RUN chown -R github:github /srv/actions-runner
 
-
 # Install nginx to serve errors via html
 RUN apt-get install -y nginx
 COPY default.conf /etc/nginx/conf.d/default.conf
 
 # copy over the start.sh script
-COPY deep-start.py /usr/local/bin/deep-start
+COPY deep-start.sh /usr/local/bin/deep-start
 RUN chmod +x /usr/local/bin/deep-start
 
 # Create a user to run the github runner
