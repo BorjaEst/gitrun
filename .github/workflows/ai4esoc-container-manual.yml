@@ -59,3 +59,14 @@ jobs:
     steps:
       - run: echo Hello world!
       - run: sleep 100
+
+  clean-up-runner:
+    runs-on: ubuntu-latest
+    needs: run-on-runner
+    if: ${{ failure() || cancelled() }}
+    steps:
+      - name: Remove runner if deployment fails
+        uses: ./.github/actions/delete-runner
+        with:
+          api-token: ${{ secrets.APITOKEN }}
+          runner-id: ${{ steps.get-jitconfig.outputs.runner-id }}
