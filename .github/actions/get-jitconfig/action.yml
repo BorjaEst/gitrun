@@ -1,3 +1,4 @@
+# https://docs.github.com/en/rest/actions/self-hosted-runners?apiVersion=2022-11-28#create-configuration-for-a-just-in-time-runner-for-an-organization
 name: Get JIT configuration
 description: Github Action to get a JIT configuration to configure a runner
 author: Karlsruhe Institute of Technology
@@ -8,6 +9,10 @@ inputs:
     required: true
 
 outputs:
+  runner-id:
+    description: The runner id for the repository
+    value: ${{ steps.get-jitconfig.outputs.runner_id }}
+
   jitconfig:
     description: The JIT configuration for the runner
     value: ${{ steps.get-jitconfig.outputs.jitconfig }}
@@ -18,7 +23,7 @@ runs:
     - id: get-jitconfig
       shell: bash
       run: |
-        JITCONFIG=$(curl -L --request POST \
+        RESPONSE=$(curl -L --request POST \
           --url https://api.github.com/repos/${{ github.repository }}/actions/runners/generate-jitconfig \
           --header 'Accept: application/vnd.github+json' \
           --header 'Authorization: Bearer ${{ inputs.api-token }}' \
@@ -30,5 +35,6 @@ runs:
               "labels": ["self-hosted","ai4eosc"],
               "work_folder": "_work",
               "ephemeral": "true"
-            }'| jq -re .encoded_jit_config)
-        echo "jitconfig=$JITCONFIG" >> $GITHUB_OUTPUT
+            }')
+        echo "runner-id=$(echo $RESPONSE | jq -re .runner.id)" >> $GITHUB_OUTPUT
+        echo "jitconfig=$(echo $RESPONSE | jq -re .encoded_jit_config)" >> $GITHUB_OUTPUT
