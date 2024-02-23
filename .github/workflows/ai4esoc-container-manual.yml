@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Start runner in ai4eosc platform
         id: start-runner
-        uses: BorjaEst/gitrun@github-setup
+        uses: BorjaEst/gitrun@github-action
         with:
           my-token: ${{ secrets.MYTOKEN }}
           api-token: ${{ secrets.APITOKEN }}
@@ -34,14 +34,14 @@ jobs:
       - run: echo Hello world!
       - run: sleep 100
 
-  clean-up-runner:
-    runs-on: ubuntu-latest
-    needs: [deploy-runner, run-on-runner]
-    if: ${{ failure() || cancelled() }}
-    steps:
-      - name: Remove the runner from the repository
-        id: clean-runner
-        uses: BorjaEst/gitrun@github-clean
-        with:
-          api-token: ${{ secrets.MYTOKEN }}
-          runner-id: ${{ needs.deploy-runner.outputs.runner-id }}
+  # clean-up-runner:
+  #   runs-on: ubuntu-latest
+  #   needs: [deploy-runner, run-on-runner]
+  #   if: ${{ failure() || cancelled() }}
+  #   steps:
+  #     - name: Remove the runner from the repository
+  #       id: clean-runner
+  #       uses: BorjaEst/gitrun@github-clean
+  #       with:
+  #         api-token: ${{ secrets.MYTOKEN }}
+  #         runner-id: ${{ needs.deploy-runner.outputs.runner-id }}
