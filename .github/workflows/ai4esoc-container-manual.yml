@@ -46,6 +46,13 @@ jobs:
         env:
           RUNNER_ID: ${{ steps.start-runner.outputs.container-id }}
 
+      - name: Remove runner if deployment fails
+        if: failure()
+        uses: ./.github/actions/delete-runner
+        with:
+          api-token: ${{ secrets.APITOKEN }}
+          runner-id: ${{ steps.start-runner.outputs.container-id }}
+
   run-on-runner:
     runs-on: [self-hosted, ai4eosc]
     needs: deploy-runner
