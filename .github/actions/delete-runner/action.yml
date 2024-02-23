@@ -18,9 +18,13 @@ runs:
     - id: delete-runner
       shell: bash
       run: |
-        curl -L --request DELETE \
+        STATUS=$(curl -L --request DELETE \
           --url https://api.github.com/repos/${{ github.repository }}/actions/runners/${{ inputs.runner-id }} \
           --header 'Accept: application/vnd.github+json' \
           --header 'Authorization: Bearer ${{ inputs.api-token }}' \
           --header 'X-GitHub-Api-Version: 2022-11-28' \
-          --fail-with-body --silent --show-error
+          --write-out %{http_code} --silent --output /dev/null)
+        echo "Request status: $STATUS"
+        if [[ $STATUS != 204 && $STATUS != 404 ]]; then
+          echo "Request failed" && exit 1
+        fi
