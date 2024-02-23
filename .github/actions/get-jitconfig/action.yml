@@ -11,7 +11,7 @@ inputs:
 outputs:
   runner-id:
     description: The runner id for the repository
-    value: ${{ steps.get-jitconfig.outputs.runner_id }}
+    value: ${{ steps.get-jitconfig.outputs.runner-id }}
 
   jitconfig:
     description: The JIT configuration for the runner

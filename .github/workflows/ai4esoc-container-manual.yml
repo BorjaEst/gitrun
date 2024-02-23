@@ -51,7 +51,7 @@ jobs:
         uses: ./.github/actions/delete-runner
         with:
           api-token: ${{ secrets.APITOKEN }}
-          runner-id: ${{ steps.start-runner.outputs.container-id }}
+          runner-id: ${{ steps.get-jitconfig.outputs.runner-id }}
 
   run-on-runner:
     runs-on: [self-hosted, ai4eosc]
