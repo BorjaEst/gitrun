@@ -15,46 +15,14 @@ jobs:
   deploy-runner:
     runs-on: ubuntu-latest
     name: Deploy a gitrun container to ai4eosc platform
-    outputs:
-      container-id: ${{ steps.start-runner.outputs.container-id }}
-      runner-id: ${{ steps.get-jitconfig.outputs.runner-id }}
     steps:
-      - name: Checkout repository content
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
-
-      - name: Get oidc token from secret mytoken
-        id: get-access-token
-        uses: BorjaEst/mytoken-action@1.0.0
-        with:
-          my-token: ${{ secrets.MYTOKEN }}
-
-      - name: Generate a JIT configuration file for a self-hosted runner
-        id: get-jitconfig
-        uses: ./.github/actions/get-jitconfig
-        with:
-          api-token: ${{ secrets.APITOKEN }}
-
       - name: Start runner in ai4eosc platform
         id: start-runner
-        uses: ./.github/actions/ai4eosc-start-runner
+        uses: BorjaEst/gitrun@github-action
         with:
-          config: ${{ steps.get-jitconfig.outputs.jitconfig }}
-          at: ${{ steps.get-access-token.outputs.access-token }}
-          vo: ${{ inputs.VO }}
-
-      - name: Print container public access url
-        env:
-          CONTAINER_ID: ${{ steps.start-runner.outputs.container-id }}
-        run: echo "https://api-$CONTAINER_ID.deployments.cloud.ai4eosc.eu"
-
-      - name: Remove runner if deployment fails
-        if: failure()
-        uses: ./.github/actions/delete-runner
-        with:
+          my-token: ${{ secrets.MYTOKEN }}
           api-token: ${{ secrets.APITOKEN }}
-          runner-id: ${{ steps.get-jitconfig.outputs.runner-id }}
+          vo: ${{ inputs.VO }}
 
   run-on-runner:
     runs-on: [self-hosted, ai4eosc]
@@ -62,19 +30,3 @@ jobs:
     steps:
       - run: echo Hello world!
       - run: sleep 100
-
-  clean-up-runner:
-    runs-on: ubuntu-latest
-    needs: [deploy-runner, run-on-runner]
-    if: ${{ failure() || cancelled() }}
-    steps:
-      - name: Checkout repository content
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
-
-      - name: Remove runner if deployment fails
-        uses: ./.github/actions/delete-runner
-        with:
-          api-token: ${{ secrets.APITOKEN }}
-          runner-id: ${{ needs.deploy-runner.outputs.runner-id }}
