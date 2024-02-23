@@ -65,6 +65,11 @@ jobs:
     needs: run-on-runner
     if: ${{ failure() || cancelled() }}
     steps:
+      - name: Checkout repository content
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
       - name: Remove runner if deployment fails
         uses: ./.github/actions/delete-runner
         with:
