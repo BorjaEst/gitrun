@@ -1,38 +1,19 @@
-## Coded edited from https://github.com/cwpearson/github-runner-docker
-FROM ubuntu:22.04
-ENV DEBIAN_FRONTEND noninteractive
+## TODO: TRY IF POSSIBLE TO RUN WITH SMALLER IMAGE LIKE JAVA
+ARG JENKINS_AGENT_VERSION=latest
+FROM jenkins/inbound-agent:${JENKINS_AGENT_VERSION}
 
-# Set the github runner version
-ARG RUNNER_VERSION="2.312.0"
+ARG JENKINS_URL
+ENV JENKINS_URL=${JENKINS_URL}
+USER root
 
-# Update the base packages
-RUN apt-get update -y
-RUN apt-get install -y --no-install-suggests --no-install-recommends \
-    curl \
-    ca-certificates
+# Install necessary packages
+RUN apt-get update && apt-get install -y curl jq
 
-# Create the directory for the github runner
-RUN adduser --system --group --no-create-home github
-RUN mkdir -p /srv/actions-runner
-RUN chown -R github:github /srv/actions-runner
+# Download the swarm-client.jar
+RUN curl -o /srv/swarm-client.jar ${JENKINS_URL}/swarm/swarm-client.jar
 
-# Download and unzip the github actions runner
-WORKDIR /srv/actions-runner
-RUN curl -O -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \
-    && tar xzf ./actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz \
-    && rm ./actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz 
+# Copy the entrypoint script
+COPY deep-start.sh /srv/deep-start.sh
 
-# install some additional dependencies and change ownership
-RUN ./bin/installdependencies.sh
-RUN chown -R github:github /srv/actions-runner
-
-# Copy over the start.sh script
-COPY deep-start.sh /usr/local/bin/deep-start
-RUN chmod +x /usr/local/bin/deep-start
-
-# Create a user to run the github runner
-USER github
-
-# Set the entrypoint to the deep-start.py script
-EXPOSE 5000
-CMD [ "deep-start" ]
+# Start the registration script
+ENTRYPOINT [ "/srv/deep-start.sh" ]
